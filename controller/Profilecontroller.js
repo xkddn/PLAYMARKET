@@ -1,35 +1,32 @@
-const MongoModels = require("../model/Profile.model");
+const ProfileService = require("../services/Profile.service");
 
 class MongoController {
   static async getAllGameDetails(req, res, next) {
     try {
-      const allDetails = await MongoModels.getAllGameDetails();
+      const allDetails = await ProfileService.getAllGameDetails();
       res.json(allDetails);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
   static async getGameDetails(req, res, next) {
     try {
       const { gameId } = req.params;
-      const details = await MongoModels.getGameDetails(parseInt(gameId));
-      if (!details) {
-        return res.status(404).json({ error: "Détails du jeu non trouvés" });
-      }
+      const details = await ProfileService.getGameDetails(parseInt(gameId));
       res.json(details);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
   static async createGameDetails(req, res, next) {
     try {
       const data = req.body;
-      const details = await MongoModels.createGameDetails(data);
+      const details = await ProfileService.createGameDetails(data);
       res.status(201).json(details);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -37,67 +34,61 @@ class MongoController {
     try {
       const { gameId } = req.params;
       const data = req.body;
-      const details = await MongoModels.updateGameDetails(
+      const details = await ProfileService.updateGameDetails(
         parseInt(gameId),
         data
       );
-      if (!details) {
-        return res.status(404).json({ error: "Détails du jeu non trouvés" });
-      }
       res.json(details);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
   static async getAllActivity(req, res, next) {
     try {
-      const allLogs = await MongoModels.getAllActivity();
+      const allLogs = await ProfileService.getAllActivity();
       res.json(allLogs);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
   static async logActivity(req, res, next) {
     try {
       const data = req.body;
-      const log = await MongoModels.logActivity(data);
+      const log = await ProfileService.logActivity(data);
       res.status(201).json(log);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
   static async getUserActivity(req, res, next) {
     try {
       const { userId } = req.params;
-      const logs = await MongoModels.getUserActivity(parseInt(userId));
+      const logs = await ProfileService.getUserActivity(parseInt(userId));
       res.json(logs);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
   static async getAllRecommendations(req, res, next) {
     try {
-      const allReco = await MongoModels.getAllRecommendations();
+      const allReco = await ProfileService.getAllRecommendations();
       res.json(allReco);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
   static async getRecommendations(req, res, next) {
     try {
       const { userId } = req.params;
-      const reco = await MongoModels.getRecommendations(parseInt(userId));
-      if (!reco) {
-        return res.status(404).json({ error: "Recommandations non trouvées" });
-      }
+      const reco = await ProfileService.getRecommendations(parseInt(userId));
       res.json(reco);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -105,13 +96,13 @@ class MongoController {
     try {
       const { userId } = req.params;
       const { items } = req.body;
-      const reco = await MongoModels.updateRecommendations(
+      const reco = await ProfileService.updateRecommendations(
         parseInt(userId),
         items
       );
       res.json(reco);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 }

@@ -1,38 +1,32 @@
-const Games = require("../model/Products.model");
+const ProductsService = require("../services/Products.service");
 
 class GamesController {
   static async getAll(req, res, next) {
     try {
-      const games = await Games.findAll();
+      const games = await ProductsService.getAllGames();
       res.json(games);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
   static async getById(req, res, next) {
     try {
       const { id } = req.params;
-      const game = await Games.findById(id);
-      if (!game) {
-        return res.status(404).json({ error: "Jeu non trouvé" });
-      }
+      const game = await ProductsService.getGameById(id);
       res.json(game);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
   static async create(req, res, next) {
     try {
       const { title, price, stock } = req.body;
-      if (!title || price === undefined) {
-        return res.status(400).json({ error: "Title et price requis" });
-      }
-      const game = await Games.createOne({ title, price, stock });
+      const game = await ProductsService.createGame({ title, price, stock });
       res.status(201).json(game);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -40,13 +34,10 @@ class GamesController {
     try {
       const { id } = req.params;
       const { stock } = req.body;
-      if (stock === undefined) {
-        return res.status(400).json({ error: "Stock requis" });
-      }
-      const game = await Games.updateStock(id, stock);
+      const game = await ProductsService.updateGameStock(id, stock);
       res.json(game);
-    } catch (e) {
-      next(e);
+    } catch (error) {
+      next(error);
     }
   }
 }
