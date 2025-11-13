@@ -147,7 +147,5 @@ PLAYMARKET/
 Karim Feki - Ismael Genet
 ---
 
-## 📄 Licence
-
-TP Bachelor EFREI
+TP Bachelor EFREI B3
 
