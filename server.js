@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const rateLimit = require("express-rate-limit");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger.config");
 const connectMongoDB = require("./config/db.mongo");
 const { connectPostgreSQL } = require("./config/db.postgres");
 const { errorHandler, notFoundHandler } = require("./middlewares/error.middleware");
@@ -75,6 +77,8 @@ app.get("/api/status", (req, res) => {
     version: "1.0.0",
   });
 });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const authRoutes = require("./routes/auth.Routes");
 app.use("/api/auth", authLimiter, authRoutes);

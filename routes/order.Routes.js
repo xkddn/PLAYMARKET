@@ -5,9 +5,123 @@ const { authenticateToken } = require("../middlewares/auth.middleware");
 const { requireAdmin } = require("../middlewares/roles.middleware");
 const { validateId } = require("../middlewares/validation.middleware");
 
+/**
+ * @swagger
+ * /api/orders:
+ *   get:
+ *     tags: [Orders]
+ *     summary: Récupérer toutes les commandes (Admin uniquement)
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste des commandes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Order'
+ *       401:
+ *         description: Non authentifié
+ *       403:
+ *         description: Permission refusée (admin requis)
+ */
 router.get("/", authenticateToken, requireAdmin, OrdersController.getAll);
+
+/**
+ * @swagger
+ * /api/orders/{id}:
+ *   get:
+ *     tags: [Orders]
+ *     summary: Récupérer une commande par ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Détails de la commande
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Order'
+ *       404:
+ *         description: Commande non trouvée
+ *       401:
+ *         description: Non authentifié
+ */
 router.get("/:id", authenticateToken, validateId, OrdersController.getById);
+
+/**
+ * @swagger
+ * /api/orders/user/{userId}:
+ *   get:
+ *     tags: [Orders]
+ *     summary: Récupérer les commandes d'un utilisateur
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Liste des commandes de l'utilisateur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Order'
+ *       401:
+ *         description: Non authentifié
+ */
 router.get("/user/:userId", authenticateToken, OrdersController.getByUserId);
+
+/**
+ * @swagger
+ * /api/orders:
+ *   post:
+ *     tags: [Orders]
+ *     summary: Créer une nouvelle commande
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [user_id, items]
+ *             properties:
+ *               user_id: { type: integer, example: 1 }
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     game_id: { type: integer, example: 1 }
+ *                     quantity: { type: integer, example: 2 }
+ *                     unit_price: { type: number, example: 59.99 }
+ *     responses:
+ *       201:
+ *         description: Commande créée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Order'
+ *       400:
+ *         description: Données invalides
+ *       401:
+ *         description: Non authentifié
+ */
 router.post("/", authenticateToken, OrdersController.create);
 
 module.exports = router;
