@@ -56,7 +56,6 @@ mongoimport --db playmarket --collection recommendations --file BDD/playmarket.r
 
 ```bash
 npm run dev    # Développement
-npm start      # Production
 ```
 
 Serveur : `http://localhost:3000`
