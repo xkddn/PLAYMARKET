@@ -23,8 +23,10 @@ const refreshLimiter = rateLimit({
  *   post:
  *     tags: [Auth]
  *     summary: Inscription d'un nouvel utilisateur
+ *     description: Crée un nouveau compte utilisateur avec email et mot de passe
  *     requestBody:
  *       required: true
+ *       description: Informations d'inscription de l'utilisateur
  *       content:
  *         application/json:
  *           schema:
@@ -37,10 +39,27 @@ const refreshLimiter = rateLimit({
  *     responses:
  *       201:
  *         description: Inscription réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: "Utilisateur créé avec succès" }
+ *                 user: { $ref: '#/components/schemas/User' }
+ *                 token: { type: string, example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+ *                 refreshToken: { type: string, example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
  *       400:
  *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       409:
  *         description: Email déjà utilisé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/register", validateRegister, AuthController.register);
 
@@ -50,8 +69,10 @@ router.post("/register", validateRegister, AuthController.register);
  *   post:
  *     tags: [Auth]
  *     summary: Connexion d'un utilisateur
+ *     description: Authentifie un utilisateur et retourne un token JWT
  *     requestBody:
  *       required: true
+ *       description: Identifiants de connexion
  *       content:
  *         application/json:
  *           schema:
@@ -63,10 +84,27 @@ router.post("/register", validateRegister, AuthController.register);
  *     responses:
  *       200:
  *         description: Connexion réussie
- *       401:
- *         description: Email ou mot de passe incorrect
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: "Connexion réussie" }
+ *                 user: { $ref: '#/components/schemas/User' }
+ *                 token: { type: string, example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+ *                 refreshToken: { type: string, example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
  *       400:
  *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Email ou mot de passe incorrect
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/login", validateLogin, AuthController.login);
 
@@ -76,22 +114,38 @@ router.post("/login", validateLogin, AuthController.login);
  *   post:
  *     tags: [Auth]
  *     summary: Rafraîchir le token d'accès
+ *     description: Génère un nouveau token d'accès à partir du refresh token
  *     requestBody:
  *       required: true
+ *       description: Refresh token pour obtenir un nouveau token d'accès
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             required: [refreshToken]
  *             properties:
- *               refreshToken: { type: string }
+ *               refreshToken: { type: string, example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
  *     responses:
  *       200:
  *         description: Token rafraîchi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token: { type: string, example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
  *       400:
  *         description: Refresh token manquant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Refresh token invalide ou expiré
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/refresh", refreshLimiter, AuthController.refreshToken);
 
@@ -101,15 +155,28 @@ router.post("/refresh", refreshLimiter, AuthController.refreshToken);
  *   get:
  *     tags: [Auth]
  *     summary: Récupérer les informations de l'utilisateur connecté
+ *     description: Retourne les détails de l'utilisateur authentifié
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Informations utilisateur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
  *       401:
  *         description: Token manquant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Token invalide ou expiré
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/me", authenticateToken, AuthController.getMe);
 

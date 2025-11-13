@@ -10,6 +10,7 @@ const { validateId } = require("../middlewares/validation.middleware");
  *   get:
  *     tags: [Users]
  *     summary: Récupérer tous les utilisateurs (Admin uniquement)
+ *     description: Retourne la liste complète de tous les utilisateurs
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -23,8 +24,16 @@ const { validateId } = require("../middlewares/validation.middleware");
  *                 $ref: '#/components/schemas/User'
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Permission refusée (admin requis)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/", authenticateToken, requireAdmin, ctrl.getUsers);
 
@@ -34,12 +43,14 @@ router.get("/", authenticateToken, requireAdmin, ctrl.getUsers);
  *   get:
  *     tags: [Users]
  *     summary: Récupérer un utilisateur par ID (Admin uniquement)
+ *     description: Retourne les détails d'un utilisateur spécifique
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: Identifiant unique de l'utilisateur
  *         schema:
  *           type: integer
  *     responses:
@@ -49,12 +60,24 @@ router.get("/", authenticateToken, requireAdmin, ctrl.getUsers);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
- *       404:
- *         description: Utilisateur non trouvé
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Permission refusée (admin requis)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Utilisateur non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/:id", authenticateToken, requireAdmin, validateId, ctrl.getUserById);
 
