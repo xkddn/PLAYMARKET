@@ -1,36 +1,34 @@
-const Users = require("../model/User.model");
+const UserService = require("../services/User.service");
 
-exports.getUsers = async (req, res, next) => {
-  try {
-    const users = await Users.findAll();
-    res.status(200).json(users);
-  } catch (e) {
-    next(e);
-  }
-};
-
-exports.getUserById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const user = await Users.findById(id);
-    if (!user) {
-      return res.status(404).json({ error: "Utilisateur non trouvé" });
+class UserController {
+  static async getUsers(req, res, next) {
+    try {
+      const users = await UserService.getAllUsers();
+      res.status(200).json(users);
+    } catch (error) {
+      next(error);
     }
-    res.status(200).json(user);
-  } catch (e) {
-    next(e);
   }
-};
 
-exports.createUser = async (req, res, next) => {
-  try {
-    const { email, password_hash } = req.body;
-    if (!email || !password_hash) {
-      return res.status(400).json({ error: "Email et password_hash requis" });
+  static async getUserById(req, res, next) {
+    try {
+      const { id } = req.params;
+      const user = await UserService.getUserById(id);
+      res.status(200).json(user);
+    } catch (error) {
+      next(error);
     }
-    const user = await Users.createOne({ email, password_hash });
-    return res.status(201).json(user);
-  } catch (e) {
-    next(e);
   }
-};
+
+  static async createUser(req, res, next) {
+    try {
+      const { email, password, role } = req.body;
+      const user = await UserService.createUser({ email, password, role });
+      res.status(201).json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
+module.exports = UserController;

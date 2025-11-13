@@ -3,7 +3,7 @@ const { db } = require("../config/db.postgres");
 class Users {
   static async findAll() {
     try {
-      const query = await db.any("SELECT id, email FROM users");
+      const query = await db.any("SELECT id, email, role FROM users");
       return query;
     } catch (e) {
       console.log("Erreur : ", e);
@@ -14,7 +14,7 @@ class Users {
   static async findById(id) {
     try {
       const user = await db.oneOrNone(
-        "SELECT id, email FROM users WHERE id = $1",
+        "SELECT id, email, role FROM users WHERE id = $1",
         [id]
       );
       return user;
@@ -24,11 +24,11 @@ class Users {
     }
   }
 
-  static async createOne({ email, password_hash }) {
+  static async createOne({ email, password_hash, role = "user" }) {
     try {
       const query_create = await db.one(
-        "INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email",
-        [email, password_hash]
+        "INSERT INTO users (email, password_hash, role) VALUES ($1, $2, $3) RETURNING id, email, role",
+        [email, password_hash, role]
       );
       return query_create;
     } catch (e) {

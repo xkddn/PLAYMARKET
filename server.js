@@ -1,12 +1,13 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
+const rateLimit = require("express-rate-limit");
 const connectMongoDB = require("./config/db.mongo");
 const { connectPostgreSQL } = require("./config/db.postgres");
+const { errorHandler, notFoundHandler } = require("./middlewares/error.middleware");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// BDD
 const initializeDatabases = async () => {
   try {
     await connectMongoDB();
@@ -19,23 +20,54 @@ const initializeDatabases = async () => {
 initializeDatabases();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
 
   if (req.method === "OPTIONS") {
-    res.sendStatus(200);
-  } else {
-    next();
+    return res.sendStatus(200);
   }
+  next();
 });
 
-// ROUTES
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: {
+    error: "Trop de requêtes, veuillez réessayer plus tard",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: {
+    error: "Trop de tentatives de connexion, veuillez réessayer plus tard",
+  },
+});
+
+app.get("/api/status", (req, res) => {
+  res.json({
+    status: "ok",
+    time: new Date().toISOString(),
+    database: "connected",
+    version: "1.0.0",
+  });
+});
+
+const authRoutes = require("./routes/auth.Routes");
+app.use("/api/auth", authLimiter, authRoutes);
+
 const gamesRoutes = require("./routes/products.Routes");
 app.use("/api/games", gamesRoutes);
 
@@ -48,21 +80,17 @@ app.use("/api/mongo", mongoRoutes);
 const orderRoutes = require("./routes/order.Routes");
 app.use("/api/orders", orderRoutes);
 
-app.get("/api/status", (req, res) => {
-  res.json({
-    status: "ok",
-    time: new Date().toISOString(),
-    database: "connected",
-  });
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
-app.use((req, res) => {
-  res.status(404).json({ error: "Route inconnu" });
+app.listen(PORT, () => {
+  console.log(`
+╔════════════════════════════════════════╗
+║   🚀 PLAYMARKET API - SERVEUR ACTIF   ║
+╠════════════════════════════════════════╣
+║  Port: ${PORT}                            ║
+║  URL: http://localhost:${PORT}            ║
+║  Status: ✅ READY                       ║
+╚════════════════════════════════════════╝
+  `);
 });
-
-app.use((err, req, res, next) => {
-  console.error(" Erreur serveur:", err.message);
-  res.status(500).json({ error: "Erreur interne serveur" });
-});
-
-app.listen(PORT, () => console.log(`Serveur OK : http://localhost:${PORT}`));
