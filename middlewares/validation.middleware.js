@@ -13,7 +13,11 @@ const handleValidationErrors = (req, res, next) => {
 
 const validateRegister = [
   body("email").isEmail().withMessage("Email invalide").normalizeEmail(),
-  body("password").isLength({ min: 6 }).withMessage("Le mot de passe doit contenir au moins 6 caractères"),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("Le mot de passe doit contenir au moins 8 caractères")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage("Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre"),
   body("role").optional().isIn(["user", "admin"]).withMessage("Le rôle doit être 'user' ou 'admin'"),
   handleValidationErrors,
 ];
