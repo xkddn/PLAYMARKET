@@ -28,10 +28,12 @@ router.get("/gamedetails", MongoController.getAllGameDetails);
  *   get:
  *     tags: [MongoDB]
  *     summary: Récupérer les détails d'un jeu
+ *     description: Retourne les informations détaillées d'un jeu depuis MongoDB
  *     parameters:
  *       - in: path
  *         name: gameId
  *         required: true
+ *         description: Identifiant unique du jeu
  *         schema:
  *           type: integer
  *     responses:
@@ -43,6 +45,10 @@ router.get("/gamedetails", MongoController.getAllGameDetails);
  *               $ref: '#/components/schemas/GameDetails'
  *       404:
  *         description: Détails non trouvés
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/gamedetails/:gameId", MongoController.getGameDetails);
 
@@ -52,10 +58,12 @@ router.get("/gamedetails/:gameId", MongoController.getGameDetails);
  *   post:
  *     tags: [MongoDB]
  *     summary: Créer des détails de jeu (Admin uniquement)
+ *     description: Ajoute des informations détaillées pour un jeu
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
+ *       description: Détails complets du jeu à créer
  *       content:
  *         application/json:
  *           schema:
@@ -63,10 +71,25 @@ router.get("/gamedetails/:gameId", MongoController.getGameDetails);
  *     responses:
  *       201:
  *         description: Détails créés
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: "Détails créés avec succès" }
+ *                 gameDetails: { $ref: '#/components/schemas/GameDetails' }
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Permission refusée (admin requis)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/gamedetails", authenticateToken, requireAdmin, MongoController.createGameDetails);
 
@@ -76,16 +99,19 @@ router.post("/gamedetails", authenticateToken, requireAdmin, MongoController.cre
  *   put:
  *     tags: [MongoDB]
  *     summary: Mettre à jour les détails d'un jeu (Admin uniquement)
+ *     description: Modifie les informations détaillées d'un jeu existant
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: gameId
  *         required: true
+ *         description: Identifiant unique du jeu
  *         schema:
  *           type: integer
  *     requestBody:
  *       required: true
+ *       description: Nouvelles informations détaillées du jeu
  *       content:
  *         application/json:
  *           schema:
@@ -93,12 +119,31 @@ router.post("/gamedetails", authenticateToken, requireAdmin, MongoController.cre
  *     responses:
  *       200:
  *         description: Détails mis à jour
- *       404:
- *         description: Détails non trouvés
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: "Détails mis à jour" }
+ *                 gameDetails: { $ref: '#/components/schemas/GameDetails' }
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Permission refusée (admin requis)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Détails non trouvés
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.put("/gamedetails/:gameId", authenticateToken, requireAdmin, MongoController.updateGameDetails);
 
@@ -108,6 +153,7 @@ router.put("/gamedetails/:gameId", authenticateToken, requireAdmin, MongoControl
  *   get:
  *     tags: [MongoDB]
  *     summary: Récupérer tous les logs d'activité (Admin uniquement)
+ *     description: Retourne tous les événements d'activité enregistrés
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -121,8 +167,16 @@ router.put("/gamedetails/:gameId", authenticateToken, requireAdmin, MongoControl
  *                 $ref: '#/components/schemas/ActivityLog'
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Permission refusée (admin requis)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/activity", authenticateToken, requireAdmin, MongoController.getAllActivity);
 
@@ -132,10 +186,12 @@ router.get("/activity", authenticateToken, requireAdmin, MongoController.getAllA
  *   post:
  *     tags: [MongoDB]
  *     summary: Logger une activité utilisateur
+ *     description: Enregistre un événement d'activité utilisateur
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
+ *       description: Détails de l'activité à enregistrer
  *       content:
  *         application/json:
  *           schema:
@@ -143,8 +199,19 @@ router.get("/activity", authenticateToken, requireAdmin, MongoController.getAllA
  *     responses:
  *       201:
  *         description: Log créé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: "Activité enregistrée" }
+ *                 activityLog: { $ref: '#/components/schemas/ActivityLog' }
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/activity", authenticateToken, MongoController.logActivity);
 
@@ -154,12 +221,14 @@ router.post("/activity", authenticateToken, MongoController.logActivity);
  *   get:
  *     tags: [MongoDB]
  *     summary: Récupérer les logs d'un utilisateur
+ *     description: Retourne tous les événements d'activité d'un utilisateur spécifique
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
+ *         description: Identifiant unique de l'utilisateur
  *         schema:
  *           type: integer
  *     responses:
@@ -173,6 +242,10 @@ router.post("/activity", authenticateToken, MongoController.logActivity);
  *                 $ref: '#/components/schemas/ActivityLog'
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/activity/:userId", authenticateToken, MongoController.getUserActivity);
 
@@ -182,6 +255,7 @@ router.get("/activity/:userId", authenticateToken, MongoController.getUserActivi
  *   get:
  *     tags: [MongoDB]
  *     summary: Récupérer toutes les recommandations (Admin uniquement)
+ *     description: Retourne toutes les recommandations générées pour tous les utilisateurs
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -195,8 +269,16 @@ router.get("/activity/:userId", authenticateToken, MongoController.getUserActivi
  *                 $ref: '#/components/schemas/Recommendation'
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Permission refusée (admin requis)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/recommendations", authenticateToken, requireAdmin, MongoController.getAllRecommendations);
 
@@ -206,12 +288,14 @@ router.get("/recommendations", authenticateToken, requireAdmin, MongoController.
  *   get:
  *     tags: [MongoDB]
  *     summary: Récupérer les recommandations d'un utilisateur
+ *     description: Retourne les recommandations personnalisées pour un utilisateur
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
+ *         description: Identifiant unique de l'utilisateur
  *         schema:
  *           type: integer
  *     responses:
@@ -221,10 +305,18 @@ router.get("/recommendations", authenticateToken, requireAdmin, MongoController.
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Recommendation'
- *       404:
- *         description: Recommandations non trouvées
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Recommandations non trouvées
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/recommendations/:userId", authenticateToken, MongoController.getRecommendations);
 
@@ -234,16 +326,19 @@ router.get("/recommendations/:userId", authenticateToken, MongoController.getRec
  *   put:
  *     tags: [MongoDB]
  *     summary: Mettre à jour les recommandations d'un utilisateur
+ *     description: Régénère ou modifie les recommandations pour un utilisateur
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
+ *         description: Identifiant unique de l'utilisateur
  *         schema:
  *           type: integer
  *     requestBody:
  *       required: true
+ *       description: Nouvelles recommandations à enregistrer
  *       content:
  *         application/json:
  *           schema:
@@ -261,8 +356,19 @@ router.get("/recommendations/:userId", authenticateToken, MongoController.getRec
  *     responses:
  *       200:
  *         description: Recommandations mises à jour
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: "Recommandations mises à jour" }
+ *                 recommendation: { $ref: '#/components/schemas/Recommendation' }
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.put("/recommendations/:userId", authenticateToken, MongoController.updateRecommendations);
 

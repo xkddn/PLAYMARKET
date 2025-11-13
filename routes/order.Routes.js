@@ -11,6 +11,7 @@ const { validateId } = require("../middlewares/validation.middleware");
  *   get:
  *     tags: [Orders]
  *     summary: Récupérer toutes les commandes (Admin uniquement)
+ *     description: Retourne la liste complète de toutes les commandes
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -24,8 +25,16 @@ const { validateId } = require("../middlewares/validation.middleware");
  *                 $ref: '#/components/schemas/Order'
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Permission refusée (admin requis)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/", authenticateToken, requireAdmin, OrdersController.getAll);
 
@@ -35,12 +44,14 @@ router.get("/", authenticateToken, requireAdmin, OrdersController.getAll);
  *   get:
  *     tags: [Orders]
  *     summary: Récupérer une commande par ID
+ *     description: Retourne les détails d'une commande spécifique
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: Identifiant unique de la commande
  *         schema:
  *           type: integer
  *     responses:
@@ -50,10 +61,18 @@ router.get("/", authenticateToken, requireAdmin, OrdersController.getAll);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Order'
- *       404:
- *         description: Commande non trouvée
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Commande non trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/:id", authenticateToken, validateId, OrdersController.getById);
 
@@ -63,12 +82,14 @@ router.get("/:id", authenticateToken, validateId, OrdersController.getById);
  *   get:
  *     tags: [Orders]
  *     summary: Récupérer les commandes d'un utilisateur
+ *     description: Retourne toutes les commandes d'un utilisateur spécifique
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
+ *         description: Identifiant unique de l'utilisateur
  *         schema:
  *           type: integer
  *     responses:
@@ -82,6 +103,10 @@ router.get("/:id", authenticateToken, validateId, OrdersController.getById);
  *                 $ref: '#/components/schemas/Order'
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/user/:userId", authenticateToken, OrdersController.getByUserId);
 
@@ -91,10 +116,12 @@ router.get("/user/:userId", authenticateToken, OrdersController.getByUserId);
  *   post:
  *     tags: [Orders]
  *     summary: Créer une nouvelle commande
+ *     description: Crée une nouvelle commande avec les articles spécifiés
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
+ *       description: Détails de la commande à créer
  *       content:
  *         application/json:
  *           schema:
@@ -116,11 +143,22 @@ router.get("/user/:userId", authenticateToken, OrdersController.getByUserId);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Order'
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: "Commande créée avec succès" }
+ *                 order: { $ref: '#/components/schemas/Order' }
  *       400:
  *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/", authenticateToken, OrdersController.create);
 

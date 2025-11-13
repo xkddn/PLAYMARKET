@@ -33,13 +33,14 @@ router.get("/", GamesController.getAll);
  *   get:
  *     tags: [Games]
  *     summary: Récupérer un jeu par ID
+ *     description: Retourne les détails d'un jeu spécifique
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: Identifiant unique du jeu
  *         schema:
  *           type: integer
- *         description: ID du jeu
  *     responses:
  *       200:
  *         description: Détails du jeu
@@ -47,10 +48,18 @@ router.get("/", GamesController.getAll);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Game'
- *       404:
- *         description: Jeu non trouvé
  *       400:
  *         description: ID invalide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Jeu non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get("/:id", validateId, GamesController.getById);
 
@@ -60,10 +69,12 @@ router.get("/:id", validateId, GamesController.getById);
  *   post:
  *     tags: [Games]
  *     summary: Créer un nouveau jeu (Admin uniquement)
+ *     description: Ajoute un nouveau jeu au catalogue
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
+ *       description: Détails du nouveau jeu à créer
  *       content:
  *         application/json:
  *           schema:
@@ -76,12 +87,31 @@ router.get("/:id", validateId, GamesController.getById);
  *     responses:
  *       201:
  *         description: Jeu créé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: "Jeu créé avec succès" }
+ *                 game: { $ref: '#/components/schemas/Game' }
  *       400:
  *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Permission refusée (admin requis)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/", authenticateToken, requireAdmin, validateGame, GamesController.create);
 
@@ -91,16 +121,19 @@ router.post("/", authenticateToken, requireAdmin, validateGame, GamesController.
  *   patch:
  *     tags: [Games]
  *     summary: Mettre à jour le stock d'un jeu (Admin uniquement)
+ *     description: Modifie la quantité en stock d'un jeu
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: Identifiant unique du jeu
  *         schema:
  *           type: integer
  *     requestBody:
  *       required: true
+ *       description: Nouvelle quantité en stock
  *       content:
  *         application/json:
  *           schema:
@@ -111,14 +144,37 @@ router.post("/", authenticateToken, requireAdmin, validateGame, GamesController.
  *     responses:
  *       200:
  *         description: Stock mis à jour
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: "Stock mis à jour" }
+ *                 game: { $ref: '#/components/schemas/Game' }
  *       400:
  *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       401:
  *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       403:
  *         description: Permission refusée (admin requis)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Jeu non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.patch("/:id/stock", authenticateToken, requireAdmin, validateId, validateStock, GamesController.updateStock);
 
