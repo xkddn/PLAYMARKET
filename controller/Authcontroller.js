@@ -37,6 +37,9 @@ class AuthController {
       if (!refreshToken) {
         return res.status(400).json({ error: "Refresh token requis" });
       }
+      if (typeof refreshToken !== 'string' || refreshToken.trim() === '') {
+        return res.status(400).json({ error: "Format de refresh token invalide" });
+      }
       const result = await AuthService.refreshAccessToken(refreshToken);
       res.status(200).json({
         message: "Token rafraîchi avec succès",

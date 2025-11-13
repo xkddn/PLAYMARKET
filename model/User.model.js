@@ -44,9 +44,10 @@ class Users {
 
   static async findByEmail(email) {
     try {
-      const user = await db.oneOrNone("SELECT * FROM users WHERE email = $1", [
-        email,
-      ]);
+      const user = await db.oneOrNone(
+        "SELECT id, email, password_hash, role, created_at FROM users WHERE email = $1",
+        [email]
+      );
       return user;
     } catch (e) {
       console.log("Erreur : ", e);
