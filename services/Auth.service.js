@@ -22,7 +22,9 @@ class AuthService {
     try {
       return jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
-      throw new Error("Token invalide ou expiré");
+      const err = new Error("Token invalide ou expiré");
+      err.status = 403;
+      throw err;
     }
   }
 
@@ -30,7 +32,9 @@ class AuthService {
     try {
       return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
     } catch (error) {
-      throw new Error("Refresh token invalide ou expiré");
+      const err = new Error("Refresh token invalide ou expiré");
+      err.status = 403;
+      throw err;
     }
   }
 

@@ -53,6 +53,7 @@ const limiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === "test",
 });
 
 app.use(limiter);
@@ -63,6 +64,7 @@ const authLimiter = rateLimit({
   message: {
     error: "Trop de tentatives de connexion, veuillez réessayer plus tard",
   },
+  skip: () => process.env.NODE_ENV === "test",
 });
 
 app.get("/api/status", (req, res) => {
@@ -92,8 +94,9 @@ app.use("/api/orders", orderRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`
 ╔════════════════════════════════════════╗
 ║   🚀 PLAYMARKET API - SERVEUR ACTIF   ║
 ╠════════════════════════════════════════╣
@@ -101,5 +104,8 @@ app.listen(PORT, () => {
 ║  URL: http://localhost:${PORT}            ║
 ║  Status: ✅ READY                       ║
 ╚════════════════════════════════════════╝
-  `);
-});
+    `);
+  });
+}
+
+module.exports = app;
