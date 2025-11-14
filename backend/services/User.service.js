@@ -35,7 +35,7 @@ class UserService {
     }
   }
 
-  static async createUser({ email, password, role = "user" }) {
+  static async createUser({ email, password, name, role = "user" }) {
     try {
       const existingUser = await Users.findByEmail(email);
       if (existingUser) {
@@ -45,7 +45,7 @@ class UserService {
       }
 
       const password_hash = await bcrypt.hash(password, 10);
-      return await Users.createOne({ email, password_hash, role });
+      return await Users.createOne({ email, password_hash, name, role });
     } catch (error) {
       console.error("Service Error:", error);
       throw error;

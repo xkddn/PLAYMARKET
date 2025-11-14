@@ -38,14 +38,14 @@ class AuthService {
     }
   }
 
-  static async register({ email, password, role }) {
+  static async register({ email, password, name, role }) {
     try {
-      const user = await UserService.createUser({ email, password, role });
+      const user = await UserService.createUser({ email, password, name, role });
       const accessToken = this.generateAccessToken(user);
       const refreshToken = this.generateRefreshToken(user);
 
       return {
-        user: { id: user.id, email: user.email, role: user.role },
+        user: { id: user.id, email: user.email, name: user.name, role: user.role },
         accessToken,
         refreshToken,
       };
@@ -77,7 +77,7 @@ class AuthService {
       const refreshToken = this.generateRefreshToken(user);
 
       return {
-        user: { id: user.id, email: user.email, role: user.role },
+        user: { id: user.id, email: user.email, name: user.name, role: user.role },
         accessToken,
         refreshToken,
       };

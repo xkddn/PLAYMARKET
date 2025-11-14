@@ -9,6 +9,7 @@ describe("Protected Routes", () => {
     const res = await request(app).post("/api/auth/register").send({
       email: `protected${Date.now()}@example.com`,
       password: "Test1234",
+      name: "Protected User",
       role: "user",
     });
     token = res.body.accessToken;

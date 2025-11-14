@@ -49,7 +49,7 @@ app.use((req, res, next) => {
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: process.env.NODE_ENV === "production" ? 100 : 1000,
   message: {
     error: "Trop de requêtes, veuillez réessayer plus tard",
   },
@@ -62,7 +62,7 @@ app.use(limiter);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: process.env.NODE_ENV === "production" ? 5 : 100,
   message: {
     error: "Trop de tentatives de connexion, veuillez réessayer plus tard",
   },

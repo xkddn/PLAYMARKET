@@ -7,6 +7,7 @@ describe("Auth Routes - Public", () => {
       const res = await request(app).post("/api/auth/register").send({
         email: `test${Date.now()}@example.com`,
         password: "Test1234",
+        name: "Test User",
         role: "user",
       });
 
@@ -40,6 +41,7 @@ describe("Auth Routes - Public", () => {
       await request(app).post("/api/auth/register").send({
         email: "logintest@example.com",
         password: "Test1234",
+        name: "Login Test",
       });
     });
 
@@ -69,6 +71,7 @@ describe("Auth Routes - Public", () => {
       const registerRes = await request(app).post("/api/auth/register").send({
         email: `refresh${Date.now()}@example.com`,
         password: "Test1234",
+        name: "Refresh Test",
       });
 
       const refreshToken = registerRes.body.refreshToken;
