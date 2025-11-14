@@ -10,7 +10,7 @@ const {
 
 const refreshLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: process.env.NODE_ENV === "production" ? 10 : 100,
   message: {
     error: "Trop de tentatives de rafraîchissement, veuillez réessayer plus tard",
   },
@@ -23,7 +23,7 @@ const refreshLimiter = rateLimit({
  *   post:
  *     tags: [Auth]
  *     summary: Inscription d'un nouvel utilisateur
- *     description: Crée un nouveau compte utilisateur avec email et mot de passe
+ *     description: Crée un nouveau compte utilisateur avec email, mot de passe et nom
  *     requestBody:
  *       required: true
  *       description: Informations d'inscription de l'utilisateur
@@ -31,11 +31,12 @@ const refreshLimiter = rateLimit({
  *         application/json:
  *           schema:
  *             type: object
- *             required: [email, password]
+ *             required: [email, password, name]
  *             properties:
- *               email: { type: string, format: email, example: user@example.com }
- *               password: { type: string, minLength: 8, example: Password123 }
- *               role: { type: string, enum: [user, admin], default: user }
+ *               email: { type: string, format: email, example: user@example.com, description: Adresse email de l'utilisateur }
+ *               password: { type: string, minLength: 8, example: Password123, description: Mot de passe (min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre) }
+ *               name: { type: string, example: John Doe, description: Nom de l'utilisateur (2-100 caractères) }
+ *               role: { type: string, enum: [user, admin], default: user, description: Rôle de l'utilisateur }
  *     responses:
  *       201:
  *         description: Inscription réussie

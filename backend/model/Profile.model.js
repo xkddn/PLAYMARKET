@@ -4,7 +4,6 @@ const gameDetailsSchema = new mongoose.Schema(
   {
     gameId: { type: Number, required: true, unique: true },
     description: { type: String, required: true },
-    images: [{ type: String }],
     tags: [{ type: String }],
     videos: [
       {

@@ -10,6 +10,7 @@ describe("MongoDB Routes", () => {
     const adminRes = await request(app).post("/api/auth/register").send({
       email: `mongoadmin${Date.now()}@example.com`,
       password: "Admin1234",
+      name: "Mongo Admin",
       role: "admin",
     });
     adminToken = adminRes.body.accessToken;
@@ -17,6 +18,7 @@ describe("MongoDB Routes", () => {
     const userRes = await request(app).post("/api/auth/register").send({
       email: `mongouser${Date.now()}@example.com`,
       password: "User1234",
+      name: "Mongo User",
       role: "user",
     });
     userToken = userRes.body.accessToken;
@@ -24,6 +26,12 @@ describe("MongoDB Routes", () => {
   });
 
   describe("GameDetails Routes", () => {
+    let testGameId;
+
+    beforeAll(() => {
+      testGameId = Math.floor(Math.random() * 1000000) + 1000;
+    });
+
     describe("GET /api/mongo/gamedetails - Public", () => {
       it("should get all game details without auth", async () => {
         const res = await request(app).get("/api/mongo/gamedetails");
@@ -47,18 +55,17 @@ describe("MongoDB Routes", () => {
           .post("/api/mongo/gamedetails")
           .set("Authorization", `Bearer ${adminToken}`)
           .send({
-            gameId: 999,
+            gameId: testGameId,
             description: "Test game description",
-            images: ["/img/test.png"],
             tags: ["action", "test"],
           });
 
-        expect([201, 400]).toContain(res.statusCode);
+        expect(res.statusCode).toBe(201);
       });
 
       it("should reject without auth", async () => {
         const res = await request(app).post("/api/mongo/gamedetails").send({
-          gameId: 999,
+          gameId: testGameId + 1,
           description: "Test",
         });
 
@@ -70,7 +77,7 @@ describe("MongoDB Routes", () => {
           .post("/api/mongo/gamedetails")
           .set("Authorization", `Bearer ${userToken}`)
           .send({
-            gameId: 999,
+            gameId: testGameId + 2,
             description: "Test",
           });
 

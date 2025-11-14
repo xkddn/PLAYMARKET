@@ -32,6 +32,7 @@ const options = {
           properties: {
             id: { type: "integer", example: 1 },
             email: { type: "string", format: "email", example: "user@example.com" },
+            name: { type: "string", example: "John Doe" },
             role: { type: "string", enum: ["user", "admin"], example: "user" },
             created_at: { type: "string", format: "date-time" },
           },
@@ -43,6 +44,8 @@ const options = {
             title: { type: "string", example: "Elden Ring" },
             price: { type: "number", format: "decimal", example: 59.99 },
             stock: { type: "integer", example: 100 },
+            image_url: { type: "string", example: "https://image.api.playstation.com/vulcan/ap/rnd/202110/2000/aGhopp3MHppi7kooGE2Dtt8C.png" },
+            rating: { type: "number", format: "decimal", example: 4.7, minimum: 0, maximum: 5 },
           },
         },
         Order: {
@@ -73,11 +76,6 @@ const options = {
           properties: {
             gameId: { type: "integer", example: 1 },
             description: { type: "string", example: "Un RPG d'action épique" },
-            images: {
-              type: "array",
-              items: { type: "string" },
-              example: ["/img/game1.png", "/img/game2.png"],
-            },
             tags: {
               type: "array",
               items: { type: "string" },

@@ -77,6 +77,4 @@ Karim Feki - Ismael Genet
 
 ---
 
-## 📄 Licence
-
 TP Bachelor EFREI

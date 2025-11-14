@@ -84,6 +84,8 @@ router.get("/:id", validateId, GamesController.getById);
  *               title: { type: string, example: Elden Ring }
  *               price: { type: number, example: 59.99 }
  *               stock: { type: integer, example: 100, default: 0 }
+ *               image_url: { type: string, example: https://image.api.playstation.com/vulcan/ap/rnd/202110/2000/aGhopp3MHppi7kooGE2Dtt8C.png }
+ *               rating: { type: number, example: 4.7, minimum: 0, maximum: 5, default: 4.0 }
  *     responses:
  *       201:
  *         description: Jeu créé

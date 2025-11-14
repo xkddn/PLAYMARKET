@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
+    name VARCHAR(100),
     role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'admin')),
     created_at TIMESTAMP DEFAULT NOW()
 );
@@ -10,7 +11,9 @@ CREATE TABLE IF NOT EXISTS games (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     price NUMERIC(10,2) NOT NULL,
-    stock INTEGER DEFAULT 0
+    stock INTEGER DEFAULT 0,
+    image_url TEXT,
+    rating DECIMAL(2,1) DEFAULT 4.0 CHECK (rating >= 0 AND rating <= 5)
 );
 
 CREATE TABLE IF NOT EXISTS orders (
@@ -28,10 +31,4 @@ CREATE TABLE IF NOT EXISTS order_items (
     unit_price NUMERIC(10,2) NOT NULL
 );
 
-INSERT INTO games (title, price, stock) VALUES
-('The Legend of Zelda: Breath of the Wild', 59.99, 50),
-('Red Dead Redemption 2', 49.99, 30),
-('Cyberpunk 2077', 39.99, 25),
-('Elden Ring', 59.99, 40),
-('God of War', 49.99, 35);
 

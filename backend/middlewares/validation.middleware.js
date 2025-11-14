@@ -18,6 +18,7 @@ const validateRegister = [
     .withMessage("Le mot de passe doit contenir au moins 8 caractères")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .withMessage("Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre"),
+  body("name").notEmpty().withMessage("Le nom est requis").isLength({ min: 2, max: 100 }).withMessage("Le nom doit contenir entre 2 et 100 caractères"),
   body("role").optional().isIn(["user", "admin"]).withMessage("Le rôle doit être 'user' ou 'admin'"),
   handleValidationErrors,
 ];
@@ -32,6 +33,8 @@ const validateGame = [
   body("title").notEmpty().withMessage("Le titre est requis").isLength({ max: 255 }).withMessage("Le titre ne doit pas dépasser 255 caractères"),
   body("price").isNumeric().withMessage("Le prix doit être un nombre").isFloat({ min: 0 }).withMessage("Le prix doit être positif"),
   body("stock").optional().isInt({ min: 0 }).withMessage("Le stock doit être un nombre entier positif"),
+  body("image_url").optional().isURL().withMessage("L'URL de l'image doit être valide"),
+  body("rating").optional().isFloat({ min: 0, max: 5 }).withMessage("Le rating doit être entre 0 et 5"),
   handleValidationErrors,
 ];
 

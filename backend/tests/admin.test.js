@@ -9,6 +9,7 @@ describe("Admin Routes", () => {
     const adminRes = await request(app).post("/api/auth/register").send({
       email: `admin${Date.now()}@example.com`,
       password: "Admin1234",
+      name: "Admin User",
       role: "admin",
     });
     adminToken = adminRes.body.accessToken;
@@ -16,6 +17,7 @@ describe("Admin Routes", () => {
     const userRes = await request(app).post("/api/auth/register").send({
       email: `user${Date.now()}@example.com`,
       password: "User1234",
+      name: "Normal User",
       role: "user",
     });
     userToken = userRes.body.accessToken;

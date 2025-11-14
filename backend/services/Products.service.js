@@ -1,9 +1,21 @@
 const Games = require("../model/Products.model");
+const MongoModels = require("../model/Profile.model");
 
 class ProductsService {
   static async getAllGames() {
     try {
-      return await Games.findAll();
+      const games = await Games.findAll();
+      const enrichedGames = await Promise.all(
+        games.map(async (game) => {
+          try {
+            const details = await MongoModels.getGameDetails(game.id);
+            return details ? { ...game, details } : game;
+          } catch (err) {
+            return game;
+          }
+        })
+      );
+      return enrichedGames;
     } catch (error) {
       console.error("Service Error:", error);
       throw error;
@@ -18,7 +30,12 @@ class ProductsService {
         error.status = 404;
         throw error;
       }
-      return game;
+      try {
+        const details = await MongoModels.getGameDetails(id);
+        return details ? { ...game, details } : game;
+      } catch (err) {
+        return game;
+      }
     } catch (error) {
       console.error("Service Error:", error);
       throw error;
