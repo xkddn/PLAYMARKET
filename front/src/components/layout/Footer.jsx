@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom'
 import { Gamepad2, Github, Twitter, Facebook, Instagram } from 'lucide-react'
 
@@ -45,58 +46,10 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">Support</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/help" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Centre d&apos;aide
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Nous contacter
-                </Link>
-              </li>
-              <li>
-                <Link to="/faq" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link to="/refund" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Remboursements
-                </Link>
-              </li>
-            </ul>
+          {/* Spacer / Copyright */}
+          <div className="md:col-span-2 flex items-end justify-end">
+            <p className="text-gray-500 text-sm">© {new Date().getFullYear()} PLAYMARKET. Tous droits réservés.</p>
           </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">Légal</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/terms" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Conditions d&apos;utilisation
-                </Link>
-              </li>
-              <li>
-                <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Politique de confidentialité
-                </Link>
-              </li>
-              <li>
-                <Link to="/cookies" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Cookies
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="border-t border-gaming-purple/20 mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; 2025 PLAYMARKET. Tous droits réservés.</p>
         </div>
       </div>
     </footer>
